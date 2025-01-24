@@ -1,12 +1,20 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/sign-in.dto';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signIn')
+  @ApiOperation({ summary: 'Get access token' })
+  @ApiBody({
+    description: 'User data',
+    type: SignInDto,
+  })
+  @ApiResponse({ status: 200, description: 'Return access token' })
   async signIn(
     @Body()
     body: SignInDto,
