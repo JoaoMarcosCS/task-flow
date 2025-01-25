@@ -7,6 +7,9 @@ import { GetBoardsByUserIdDto } from './queries/get-boards-by-user-id/get-boards
 import { GetBoardsByUserIdQuery } from './queries/get-boards-by-user-id/get-boards-by-user-id.query';
 import { GetBoardByUserIdDto } from './queries/get-board-by-user-id/get-board-by-user-id.dto';
 import { GetBoardByUserIdQuery } from './queries/get-board-by-user-id/get-board-by-user-id.query';
+import { UpdateBoardCommand } from './commands/update-board/update-board.command';
+import { UpdateBoardDto } from './commands/update-board/update-board.dto';
+import { DeleteBoardCommand } from './commands/delete-board/delete-board.command';
 
 @Injectable()
 export class BoardService {
@@ -37,11 +40,33 @@ export class BoardService {
   }
 
   async getBoardByUserId(data: GetBoardByUserIdQuery) {
-    const query = plainToClass(GetBoardByUserIdQuery, { data });
+    const query = plainToClass(GetBoardByUserIdQuery, data);
 
     return await this.queryBus.execute<
       GetBoardByUserIdQuery,
       GetBoardByUserIdDto
     >(query);
+  }
+
+  async update(boardId: number, data: UpdateBoardDto) {
+    const command = plainToClass(UpdateBoardCommand, { ...data, id: boardId });
+
+    const result = await this.commandBus.execute<UpdateBoardCommand, boolean>(
+      command,
+    );
+
+    if (!result) throw new BadRequestException('Erro ao editar a board');
+
+    return { ok: result };
+  }
+
+  async delete(boardId: number) {
+    console.log(boardId);
+    const command = plainToClass(DeleteBoardCommand, { id: boardId });
+    const result = await this.commandBus.execute<DeleteBoardCommand, boolean>(
+      command,
+    );
+    if (!result) throw new BadRequestException('Erro ao deletar a board');
+    return { ok: result };
   }
 }

@@ -1,7 +1,20 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateBoardDto } from './commands/create-board/create-board.dto';
 import { BoardService } from './board.service';
 import { AuthJwtGuard } from '../auth/guard/auth-jwt.guard';
+import { AdminBoardGuard } from '../auth/guard/admin-board.guard';
+import { UpdateBoardDto } from './commands/update-board/update-board.dto';
+import { GetBoardByUserIdQuery } from './queries/get-board-by-user-id/get-board-by-user-id.query';
 
 @Controller('board')
 export class BoardController {
@@ -29,9 +42,28 @@ export class BoardController {
   @UseGuards(AuthJwtGuard)
   async getBoardByUserId(
     @Param()
-    userId: number,
+    params: GetBoardByUserIdQuery,
+  ) {
+    return await this.boardService.getBoardByUserId(params);
+  }
+
+  @Patch(':boardId')
+  @UseGuards(AuthJwtGuard, AdminBoardGuard)
+  async update(
+    @Param('boardId', ParseIntPipe)
+    boardId: number,
+    @Body()
+    body: UpdateBoardDto,
+  ) {
+    return await this.boardService.update(boardId, body);
+  }
+
+  @Delete(':boardId')
+  @UseGuards(AuthJwtGuard, AdminBoardGuard)
+  async delete(
+    @Param('boardId', ParseIntPipe)
     boardId: number,
   ) {
-    return await this.boardService.getBoardByUserId({ userId, boardId });
+    return await this.boardService.delete(boardId);
   }
 }
