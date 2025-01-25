@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DataSource } from 'typeorm';
-import { User } from '../user/entity/user.entity';
+import { User } from '../user/entities/user.entity';
 import { comparePassword } from 'src/utils/compare-password';
 @Injectable()
 export class AuthService {

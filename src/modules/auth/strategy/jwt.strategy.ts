@@ -1,4 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
@@ -13,10 +14,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  //executado depois que o token já é validado, nesse caso, não precisamos fazer nada
   validate(payload: any) {
-    if (payload.type !== 'acess')
-      throw new UnauthorizedException('Invalid acess token');
-
-    return {};
+    console.log('valdiado');
+    return payload;
   }
 }
