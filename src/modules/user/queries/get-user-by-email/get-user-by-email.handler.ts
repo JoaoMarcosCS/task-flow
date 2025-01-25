@@ -3,7 +3,7 @@ import { GetUserByEmailQuery } from './get-user-by-email.query';
 import { GetUserByEmailDto } from './get-user-by-email.dto';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { User } from '../../entity/user.entity';
+import { User } from '../../entities/user.entity';
 import { plainToClass } from 'class-transformer';
 
 @QueryHandler(GetUserByEmailQuery)
@@ -15,10 +15,10 @@ export class GetUserByEmailHandler
     private readonly dataSource: DataSource,
   ) {}
 
-  async execute(query: GetUserByEmailQuery): Promise<GetUserByEmailDto | null> {
+  async execute(data: GetUserByEmailQuery): Promise<GetUserByEmailDto | null> {
     const user = await this.dataSource.manager.find(User, {
       where: {
-        email: query.email,
+        email: data.email,
       },
     });
 
