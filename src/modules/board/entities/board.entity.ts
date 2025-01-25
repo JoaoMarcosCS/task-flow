@@ -15,7 +15,10 @@ export class Board extends BaseEntity {
   @JoinTable()
   members: User[];
 
-  @OneToMany(() => Task, (task) => task.board, { onDelete: 'CASCADE' })
+  @OneToMany(() => Task, (task) => task.board, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
   @JoinTable()
-  tasks: Task[];
+  tasks?: Task[];
 }
