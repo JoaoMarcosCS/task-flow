@@ -4,7 +4,7 @@ import { GetBoardByUserIdQuery } from './get-board-by-user-id.query';
 import { DataSource } from 'typeorm';
 import { Board } from '../../entities/board.entity';
 import { BoardUserRole } from '../../entities/board_user_role.entity';
-import { UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 
 @QueryHandler(GetBoardByUserIdQuery)
 export class GetBoardByUserIdHandler
@@ -15,9 +15,9 @@ export class GetBoardByUserIdHandler
   async execute(query: GetBoardByUserIdQuery): Promise<GetBoardByUserIdDto> {
     const { userId, boardId } = query;
 
-    console.log(
-      `${typeof userId} - ${JSON.stringify(userId)}, ${typeof boardId} - ${boardId}`,
-    );
+    if (!userId || !boardId)
+      throw new BadRequestException('Usuário ou board não encontrado');
+
     const board_user_role = await this.dataSource.manager.findOne(
       BoardUserRole,
       {
@@ -39,7 +39,7 @@ export class GetBoardByUserIdHandler
 
     if (!board_user_role)
       throw new UnauthorizedException(
-        'Usuário não autorizado para esse board de tarefas',
+        'Usuário não autorizado para entrar nesta board de tarefas',
       );
 
     const board = await this.dataSource.manager.findOne(Board, {

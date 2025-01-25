@@ -53,6 +53,8 @@ export class CreateBoardHandler
       newBoardUserRole.userId = memberAdmin.id;
       newBoardUserRole.role = roleAdmin;
 
+      await db.save(BoardUserRole, newBoardUserRole);
+
       return true;
     });
   }
