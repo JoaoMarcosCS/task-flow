@@ -20,6 +20,7 @@ export class GetUserByEmailHandler
       where: {
         email: data.email,
       },
+      select: ['id', 'name', 'email'],
     });
 
     if (!user.length) return null;
