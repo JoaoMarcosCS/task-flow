@@ -23,11 +23,11 @@ export class AuthService {
       },
     });
 
-    if (!user) return new NotFoundException('Usuário não encontrado');
+    if (!user) throw new NotFoundException('Usuário não encontrado');
 
     const passwordIsCorrect = await comparePassword(password, user.password);
 
-    if (!passwordIsCorrect) return new BadRequestException('Senha incorreta');
+    if (!passwordIsCorrect) throw new BadRequestException('Senha incorreta');
 
     //mapeamento para não passar a senha para o jwt
     const payload = {
