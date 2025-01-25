@@ -102,6 +102,7 @@ export const seed = async (datasource: DataSource) => {
     { description: 'Não iniciado' },
     { description: 'Em andamento' },
     { description: 'Finalizado' },
+    { description: 'Cancelado' },
   ];
 
   const statuses = statusesData.map((statusData) => {
@@ -242,12 +243,22 @@ export const seed = async (datasource: DataSource) => {
     },
   });
 
+  const priorityDefault = priorities.find(
+    (priority) => priority.description === 'Baixa',
+  );
+
+  const statusDefault = statuses.find(
+    (status) => status.description === 'Não iniciado',
+  );
+
   const createTasksForBoard = async (tasks: any[], board: Board) => {
     for (const taskData of tasks) {
       const task = new Task();
       task.title = taskData.title;
       task.description = taskData.description;
       task.board = board;
+      task.priority = priorityDefault!;
+      task.status = statusDefault!;
       await taskRepository.save(task);
     }
   };
