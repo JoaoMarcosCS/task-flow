@@ -6,17 +6,17 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './commands/create-user/create-user.dto';
-import { AuthJwtGuard } from '../auth/guard/auth-jwt.guard';
 import { UpdateUserDto } from './commands/update-user/update-user.dto';
+import { Public } from '../auth/decorator/public-route.decorator';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Public()
   @Post()
   async create(
     @Body()
@@ -26,7 +26,6 @@ export class UserController {
   }
 
   @Patch()
-  @UseGuards(AuthJwtGuard)
   async update(
     @Body()
     body: UpdateUserDto,
@@ -35,7 +34,6 @@ export class UserController {
   }
 
   @Get('get-by-id/:id')
-  @UseGuards(AuthJwtGuard)
   async getUserById(
     @Param()
     id: number,
@@ -44,7 +42,6 @@ export class UserController {
   }
 
   @Get('get-by-email/:email')
-  @UseGuards(AuthJwtGuard)
   async getUserByEmail(
     @Param()
     email: string,
@@ -53,7 +50,6 @@ export class UserController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthJwtGuard)
   async delete(
     @Param()
     id: number,
