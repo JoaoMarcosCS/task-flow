@@ -11,7 +11,7 @@ export class Board extends BaseEntity {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @ManyToMany(() => User, (user) => user.boards, { onDelete: 'SET NULL' })
+  @ManyToMany(() => User, (user) => user.boards, { onDelete: 'CASCADE' })
   @JoinTable()
   members: User[];
 
