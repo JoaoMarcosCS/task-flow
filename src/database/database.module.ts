@@ -2,9 +2,15 @@
 import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/modules/user/entity/user.entity';
-import { generateHash } from 'src/utils/generate-hash';
+import { Board } from 'src/modules/board/entities/board.entity';
+import { BoardUserRole } from 'src/modules/board/entities/board_user_role.entity';
+import { Role } from 'src/modules/board/entities/role.entity';
+import { Priority } from 'src/modules/task/entities/priority.entity';
+import { Status } from 'src/modules/task/entities/status.entity';
+import { Task } from 'src/modules/task/entities/task.entity';
+import { User } from 'src/modules/user/entities/user.entity';
 import { DataSource } from 'typeorm';
+import { seed } from './seed/seed';
 
 @Module({
   imports: [
@@ -18,8 +24,8 @@ import { DataSource } from 'typeorm';
         username: configService.get('DATABASE_USERNAME'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [User],
-        synchronize: false,
+        entities: [User, Role, Priority, Board, Task, Status, BoardUserRole],
+        synchronize: true,
         logging: false,
       }),
     }),
@@ -30,42 +36,41 @@ export class DatabaseModule implements OnModuleInit {
 
   async onModuleInit() {
     console.log('✅ Database connected');
-    await this.checkAndSeedDatabase();
+    await this.resetAndSeedDatabase();
   }
 
-  private async checkAndSeedDatabase() {
-    const hasUserTable = await this.hasTable('user');
+  private async resetAndSeedDatabase() {
+    console.log('⚠️ Cleaning tables');
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
 
-    if (!hasUserTable) {
-      console.log('🔴 Creating tables');
-      await this.dataSource.synchronize();
-    } else {
-      console.log('🔵 Tables already exist');
+    try {
+      await queryRunner.startTransaction();
+      const tables = await this.getAllTables();
+
+      for (const table of tables) {
+        //trucade elimina os registros da tabela
+        await queryRunner.query(`TRUNCATE TABLE "${table}" CASCADE;`);
+      }
+
+      await queryRunner.commitTransaction();
+      console.log('✅ All tables cleaned');
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      console.error('❌ Error resetting database:', error);
+    } finally {
+      await queryRunner.release();
     }
 
-    const existingUser = await this.dataSource.getRepository(User).findOne({
-      where: { email: 'jmcsjoaomarcos@gmail.com' },
-    });
-
-    if (!existingUser) {
-      console.log('🔴 No data found');
-      const hash = await generateHash('jmcs');
-      const user = this.dataSource.getRepository(User).create({
-        name: 'João Marcos',
-        email: 'jmcsjoaomarcos@gmail.com',
-        password: hash,
-      });
-
-      await this.dataSource.getRepository(User).save(user);
-      console.log('✅ Seed data inserted');
-    } else {
-      console.log('🔵 Data found');
-    }
+    console.log('Starting seed ');
+    await seed(this.dataSource);
+    console.log('Finished seed');
   }
 
-  private async hasTable(tableName: string): Promise<boolean> {
-    const query = `SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = '${tableName}');`;
-    const result = await this.dataSource.query(query);
-    return result[0].exists;
+  private async getAllTables(): Promise<string[]> {
+    const tables = await this.dataSource.query(
+      `SELECT tablename FROM pg_tables WHERE schemaname = 'public';`,
+    );
+    return tables.map((row: { tablename: string }) => row.tablename);
   }
 }
