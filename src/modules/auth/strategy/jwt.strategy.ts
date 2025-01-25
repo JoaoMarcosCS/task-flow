@@ -14,9 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  //executado depois que o token já é validado, nesse caso, não precisamos fazer nada
   validate(payload: any) {
-    console.log('valdiado');
     return payload;
   }
 }
