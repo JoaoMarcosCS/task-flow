@@ -16,15 +16,15 @@ export class GetUserByEmailHandler
   ) {}
 
   async execute(data: GetUserByEmailQuery): Promise<GetUserByEmailDto | null> {
-    const user = await this.dataSource.manager.find(User, {
+    const user = await this.dataSource.manager.findOne(User, {
       where: {
         email: data.email,
       },
       select: ['id', 'name', 'email'],
     });
 
-    if (!user.length) return null;
+    if (!user) return null;
 
-    return plainToClass(GetUserByEmailDto, user[0]);
+    return plainToClass(GetUserByEmailDto, user);
   }
 }

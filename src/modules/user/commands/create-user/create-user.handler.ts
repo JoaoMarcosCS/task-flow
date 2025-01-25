@@ -2,6 +2,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.command';
 import { DataSource } from 'typeorm';
 import { User } from '../../entities/user.entity';
+import { generateHash } from 'src/utils/generate-hash';
+import { CreateUserDto } from './create-user.dto';
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler
@@ -9,12 +11,15 @@ export class CreateUserHandler
 {
   constructor(private readonly dataSource: DataSource) {}
 
-  async execute(command: CreateUserCommand): Promise<boolean> {
-    const data = this.dataSource.manager.create(User, {
-      ...command,
+  async execute(data: CreateUserDto): Promise<boolean> {
+    const hash = await generateHash(data.password);
+
+    const user = this.dataSource.manager.create(User, {
+      ...data,
+      password: hash,
     });
 
-    const result = await this.dataSource.manager.save(data);
+    const result = await this.dataSource.manager.save(user);
 
     if (!result) return false;
 
