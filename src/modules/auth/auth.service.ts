@@ -32,7 +32,7 @@ export class AuthService {
     //mapeamento para não passar a senha para o jwt
     const payload = {
       email: user.email,
-      id: user.id,
+      userId: user.id,
       name: user.name,
     };
 
