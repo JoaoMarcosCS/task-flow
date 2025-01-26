@@ -11,16 +11,16 @@ export class DeleteBoardHandler
   constructor(private readonly dataSource: DataSource) {}
 
   async execute(command: DeleteBoardCommand): Promise<boolean> {
-    return await this.dataSource.transaction(async (manager) => {
-      const boardUserRolesDelete = await manager.delete(BoardUserRole, {
-        boardId: command.id,
+    return await this.dataSource.transaction(async (db) => {
+      const boardUserRolesDelete = await db.delete(BoardUserRole, {
+        where: { boardId: command.id },
       });
 
       if (boardUserRolesDelete.affected === 0) {
         return false;
       }
 
-      const result = await manager.delete(Board, {
+      const result = await db.delete(Board, {
         id: command.id,
       });
 

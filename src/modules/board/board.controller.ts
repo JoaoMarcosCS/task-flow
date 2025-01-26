@@ -77,4 +77,30 @@ export class BoardController {
   ) {
     return await this.boardService.addMember(boardId, body.userId, body.roleId);
   }
+
+  @Post(':boardId/delete-member')
+  @UseGuards(AuthJwtGuard, AdminBoardGuard)
+  async deleteMember(
+    @Param('boardId', ParseIntPipe)
+    boardId: number,
+    @Body()
+    body: { userId: number },
+  ) {
+    return await this.boardService.deleteMember(boardId, body.userId);
+  }
+
+  @Post(':boardId/update-member-role')
+  @UseGuards(AuthJwtGuard, AdminBoardGuard)
+  async updateMemberRole(
+    @Param('boardId', ParseIntPipe)
+    boardId: number,
+    @Body()
+    body: { userId: number; roleId: number },
+  ) {
+    return await this.boardService.updateMemberRole(
+      boardId,
+      body.userId,
+      body.roleId,
+    );
+  }
 }

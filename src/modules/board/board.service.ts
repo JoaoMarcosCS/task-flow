@@ -10,7 +10,9 @@ import { GetBoardByUserIdQuery } from './queries/get-board-by-user-id/get-board-
 import { UpdateBoardCommand } from './commands/update-board/update-board.command';
 import { UpdateBoardDto } from './commands/update-board/update-board.dto';
 import { DeleteBoardCommand } from './commands/delete-board/delete-board.command';
-import { AddMemberCommand } from './commands/add-member/add-member.command';
+import { AddMemberBoardCommand } from './commands/add-member-board/add-member-board.command';
+import { DeleteMemberBoardCommand } from './commands/delete-member-board/delete-member.command';
+import { UpdateMemberRoleBoardCommand } from './commands/update-member-role-board/update-member-role-board.command';
 
 @Injectable()
 export class BoardService {
@@ -72,17 +74,51 @@ export class BoardService {
   }
 
   async addMember(boardId: number, userId: number, roleId: number) {
-    const command = plainToClass(AddMemberCommand, {
+    const command = plainToClass(AddMemberBoardCommand, {
       id: boardId,
       userId,
       roleId,
     });
 
-    const result = await this.commandBus.execute<AddMemberCommand, boolean>(
-      command,
-    );
+    const result = await this.commandBus.execute<
+      AddMemberBoardCommand,
+      boolean
+    >(command);
 
     if (!result) throw new BadRequestException('Erro ao adicionar membro');
+
+    return { ok: result };
+  }
+
+  async deleteMember(boardId: number, userId: number) {
+    const command = plainToClass(DeleteMemberBoardCommand, {
+      id: boardId,
+      userId,
+    });
+
+    const result = await this.commandBus.execute<
+      DeleteMemberBoardCommand,
+      boolean
+    >(command);
+
+    if (!result) throw new BadRequestException('Erro ao remover membro');
+
+    return { ok: result };
+  }
+
+  async updateMemberRole(boardId: number, userId: number, roleId: number) {
+    const command = plainToClass(UpdateMemberRoleBoardCommand, {
+      boardId,
+      userId,
+      roleId,
+    });
+
+    const result = await this.commandBus.execute<
+      UpdateMemberRoleBoardCommand,
+      boolean
+    >(command);
+
+    if (!result) throw new BadRequestException('Erro ao atualizar membro');
 
     return { ok: result };
   }
