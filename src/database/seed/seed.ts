@@ -99,7 +99,6 @@ export const seed = async (datasource: DataSource) => {
   const statusRepository = datasource.getRepository(Status);
 
   const statusesData = [
-    { description: 'Não iniciado' },
     { description: 'Em andamento' },
     { description: 'Finalizado' },
     { description: 'Cancelado' },
