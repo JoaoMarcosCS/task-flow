@@ -15,13 +15,13 @@ export class User extends BaseEntity {
   password: string;
 
   @ManyToMany(() => Board, (board) => board.members, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
     nullable: true,
   })
   boards: Board[];
 
   @ManyToMany(() => Task, (task) => task.assignees, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
     nullable: true,
   })
   tasks: Task[];
