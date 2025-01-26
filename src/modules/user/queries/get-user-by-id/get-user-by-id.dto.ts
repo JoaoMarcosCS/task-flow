@@ -1,5 +1,5 @@
 export class GetUserByIdDto {
   id: number;
-  name: number;
+  name: string;
   email: string;
 }
