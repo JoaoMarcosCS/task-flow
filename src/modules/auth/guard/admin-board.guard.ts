@@ -18,7 +18,7 @@ export class AdminBoardGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const userId = request.params.userId || request.user.userId;
-    const boardId = request.params.boardId;
+    const boardId = request.params.boardId || request.body.boardId;
 
     if (!userId || !boardId) {
       throw new ForbiddenException('Usuário ou board não encontrado.');
