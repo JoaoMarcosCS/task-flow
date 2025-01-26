@@ -3,6 +3,6 @@ import { Column, Entity } from 'typeorm';
 
 @Entity('status')
 export class Status extends BaseEntity {
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   description: string;
 }
