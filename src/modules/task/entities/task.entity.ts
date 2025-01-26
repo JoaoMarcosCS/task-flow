@@ -11,19 +11,17 @@ export class Task extends BaseEntity {
   title: string;
 
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 
   @ManyToOne(() => Priority, {
     onDelete: 'SET NULL',
     nullable: true,
-    eager: true,
   })
   priority: Priority;
 
   @ManyToOne(() => Status, {
     onDelete: 'SET NULL',
     nullable: true,
-    eager: true,
   })
   status: Status;
 
@@ -31,7 +29,8 @@ export class Task extends BaseEntity {
   board: Board;
 
   @ManyToMany(() => User, (user) => user.tasks, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
+    nullable: true,
   })
   @JoinTable()
   assignees: User[];
