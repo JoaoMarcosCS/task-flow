@@ -28,8 +28,8 @@ export class UserService {
     return result;
   }
 
-  async getUserByEmail(data: string) {
-    const query = plainToClass(GetUserByEmailQuery, data);
+  async getUserByEmail(email: string) {
+    const query = plainToClass(GetUserByEmailQuery, { email });
 
     const result = await this.queryBus.execute<
       GetUserByEmailQuery,
