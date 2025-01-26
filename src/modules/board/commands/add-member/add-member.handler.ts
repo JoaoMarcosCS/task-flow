@@ -18,14 +18,11 @@ export class AddMemberHandler
         where: { id: command.roleId },
       });
 
-      console.log('role add', JSON.stringify(role));
       if (!role) return false;
 
       const user = await db.findOne(User, {
         where: { id: command.userId },
       });
-
-      console.log('user add', JSON.stringify(user));
 
       if (!user) return false;
 
@@ -34,20 +31,12 @@ export class AddMemberHandler
         relations: ['members'],
       });
 
-      console.log('board add', JSON.stringify(board));
-
       if (!board) return false;
 
       board?.members.push(user);
 
       await db.save(board);
 
-      const board1 = await db.findOne(Board, {
-        where: { id: command.id },
-        relations: ['members'],
-      });
-
-      console.log('board add', JSON.stringify(board1));
       const newBoardUserRole = new BoardUserRole();
       newBoardUserRole.boardId = board.id;
       newBoardUserRole.userId = user.id;
@@ -57,8 +46,6 @@ export class AddMemberHandler
         ...newBoardUserRole,
       });
       await db.save(boardUserRole);
-
-      console.log('boardroleuser add', JSON.stringify(boardUserRole));
 
       return true;
     });
