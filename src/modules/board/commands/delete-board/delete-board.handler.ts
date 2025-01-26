@@ -13,7 +13,7 @@ export class DeleteBoardHandler
   async execute(command: DeleteBoardCommand): Promise<boolean> {
     return await this.dataSource.transaction(async (db) => {
       const boardUserRolesDelete = await db.delete(BoardUserRole, {
-        where: { boardId: command.id },
+        boardId: command.id,
       });
 
       if (boardUserRolesDelete.affected === 0) {
