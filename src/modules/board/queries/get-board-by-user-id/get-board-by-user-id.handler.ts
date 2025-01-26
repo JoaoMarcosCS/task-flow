@@ -39,11 +39,17 @@ export class GetBoardByUserIdHandler
         'Usuário não autorizado para entrar nesta board de tarefas',
       );
 
-    const board = await this.dataSource.manager.findOne(Board, {
+    const board = await this.dataSource.manager.find(Board, {
       where: {
         id: query.boardId,
       },
-      relations: ['members', 'tasks'],
+      relations: [
+        'members',
+        'tasks',
+        'tasks.priority',
+        'tasks.status',
+        'tasks.assignees',
+      ],
       select: {
         id: true,
         title: true,
@@ -54,9 +60,11 @@ export class GetBoardByUserIdHandler
           assignees: {
             name: true,
             email: true,
-            created_at: true,
-            update_at: true,
           },
+          created_at: true,
+          update_at: true,
+          title: true,
+          description: true,
           priority: {
             description: true,
           },
@@ -72,10 +80,12 @@ export class GetBoardByUserIdHandler
       },
     });
 
+    console.log(JSON.stringify(board[0]?.tasks));
+
     return {
-      board,
-      total_members: board?.members.length ?? 0,
-      total_tasks: board?.tasks?.length ?? 0,
+      board: board[0],
+      total_members: board[0]?.members.length ?? 0,
+      total_tasks: board[0]?.tasks?.length ?? 0,
       board_users_roles,
     };
   }
