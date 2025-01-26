@@ -10,6 +10,7 @@ import { GetBoardByUserIdQuery } from './queries/get-board-by-user-id/get-board-
 import { UpdateBoardCommand } from './commands/update-board/update-board.command';
 import { UpdateBoardDto } from './commands/update-board/update-board.dto';
 import { DeleteBoardCommand } from './commands/delete-board/delete-board.command';
+import { AddMemberCommand } from './commands/add-member/add-member.command';
 
 @Injectable()
 export class BoardService {
@@ -67,6 +68,22 @@ export class BoardService {
       command,
     );
     if (!result) throw new BadRequestException('Erro ao deletar a board');
+    return { ok: result };
+  }
+
+  async addMember(boardId: number, userId: number, roleId: number) {
+    const command = plainToClass(AddMemberCommand, {
+      id: boardId,
+      userId,
+      roleId,
+    });
+
+    const result = await this.commandBus.execute<AddMemberCommand, boolean>(
+      command,
+    );
+
+    if (!result) throw new BadRequestException('Erro ao adicionar membro');
+
     return { ok: result };
   }
 }

@@ -66,4 +66,15 @@ export class BoardController {
   ) {
     return await this.boardService.delete(boardId);
   }
+
+  @Post(':boardId/add-member')
+  @UseGuards(AuthJwtGuard, AdminBoardGuard)
+  async addMember(
+    @Param('boardId', ParseIntPipe)
+    boardId: number,
+    @Body()
+    body: { userId: number; roleId: number },
+  ) {
+    return await this.boardService.addMember(boardId, body.userId, body.roleId);
+  }
 }
