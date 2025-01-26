@@ -5,5 +5,5 @@ export class GetBoardByUserIdDto {
   board: Board | null;
   total_members: number;
   total_tasks: number;
-  board_user_role: BoardUserRole;
+  board_users_roles: BoardUserRole[];
 }

@@ -18,26 +18,23 @@ export class GetBoardByUserIdHandler
     if (!userId || !boardId)
       throw new BadRequestException('Usuário ou board não encontrado');
 
-    const board_user_role = await this.dataSource.manager.findOne(
+    const board_users_roles = await this.dataSource.manager.find(
       BoardUserRole,
       {
         where: {
-          userId,
           boardId,
         },
         relations: ['role'],
         select: {
           role: {
             description: true,
+            id: true,
           },
-          boardId: false,
-          userId: false,
-          id: false,
         },
       },
     );
 
-    if (!board_user_role)
+    if (!board_users_roles)
       throw new UnauthorizedException(
         'Usuário não autorizado para entrar nesta board de tarefas',
       );
@@ -45,9 +42,6 @@ export class GetBoardByUserIdHandler
     const board = await this.dataSource.manager.findOne(Board, {
       where: {
         id: query.boardId,
-        members: {
-          id: query.userId,
-        },
       },
       relations: ['members', 'tasks'],
       select: {
@@ -82,7 +76,7 @@ export class GetBoardByUserIdHandler
       board,
       total_members: board?.members.length ?? 0,
       total_tasks: board?.tasks?.length ?? 0,
-      board_user_role,
+      board_users_roles,
     };
   }
 }
