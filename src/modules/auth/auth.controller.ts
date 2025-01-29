@@ -11,12 +11,12 @@ export class AuthController {
 
   @Public()
   @Post('signIn')
-  @ApiOperation({ summary: 'Get access token' })
+  @ApiOperation({ summary: 'Pegue o token de acesso' })
   @ApiBody({
     description: 'User data',
     type: SignInDto,
   })
-  @ApiResponse({ status: 200, description: 'Return access token' })
+  @ApiResponse({ status: 200, description: 'Retorna o token de acesso' })
   async signIn(
     @Body()
     body: SignInDto,
