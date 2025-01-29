@@ -1,5 +1,9 @@
-import { Board } from '../../entities/board.entity';
-
 export class GetBoardsByUserIdDto {
-  boards: Board[] | null;
+  id: number;
+  created_at: Date;
+  updated_at: Date;
+  total_members: number;
+  total_tasks: number;
+  title: string;
+  description?: string;
 }

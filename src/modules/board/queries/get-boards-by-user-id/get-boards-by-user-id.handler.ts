@@ -2,33 +2,54 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetBoardsByUserIdQuery } from './get-boards-by-user-id.query';
 import { GetBoardsByUserIdDto } from './get-boards-by-user-id.dto';
 import { DataSource } from 'typeorm';
-import { Board } from '../../entities/board.entity';
+import { User } from 'src/modules/user/entities/user.entity';
 
 @QueryHandler(GetBoardsByUserIdQuery)
 export class GetBoardsByUserIdHandler
-  implements IQueryHandler<GetBoardsByUserIdQuery, GetBoardsByUserIdDto>
+  implements IQueryHandler<GetBoardsByUserIdQuery, GetBoardsByUserIdDto[]>
 {
   constructor(private readonly dataSource: DataSource) {}
 
-  async execute(query: GetBoardsByUserIdQuery): Promise<GetBoardsByUserIdDto> {
-    const boards = await this.dataSource
-      .createQueryBuilder(Board, 'board')
-      .leftJoinAndSelect('board.members', 'user')
-      .leftJoinAndSelect('board.tasks', 'task')
-      .where('user.id = :userId', { userId: query.userId })
-      .select([
-        'board.id',
-        'board.title',
-        'board.description',
-        'board.created_at',
-        'board.update_at',
-        'COUNT( DISTINCT user.id) AS total_members',
-        'COUNT( DISTINCT task.id) AS total_tasks',
-      ])
-      .orderBy('board.update_at', 'DESC')
-      .groupBy('board.id')
-      .getRawMany();
+  async execute(
+    query: GetBoardsByUserIdQuery,
+  ): Promise<GetBoardsByUserIdDto[]> {
+    const user = await this.dataSource.manager.findOne(User, {
+      where: {
+        id: query.userId,
+      },
+      relations: ['boards', 'boards.tasks', 'boards.members'],
+      select: {
+        boards: {
+          id: true,
+          description: true,
+          title: true,
+          members: true,
+          tasks: true,
+          update_at: true,
+          created_at: true,
+        },
+      },
+      order: {
+        boards: {
+          update_at: 'desc',
+        },
+      },
+    });
 
-    return { boards };
+    if (!user?.boards) return [];
+
+    const boards = user.boards.map((board) => {
+      const boardDto = new GetBoardsByUserIdDto();
+      boardDto.id = board.id;
+      boardDto.title = board.title;
+      boardDto.description = board.description;
+      boardDto.total_members = board.members.length ?? 0;
+      boardDto.total_tasks = board.tasks?.length ?? 0;
+      boardDto.created_at = board.created_at;
+      boardDto.updated_at = board.update_at;
+      return boardDto;
+    });
+
+    return boards;
   }
 }
