@@ -11,26 +11,24 @@ export class DeleteMemberBoardHandler
   constructor(private readonly dataSource: DataSource) {}
 
   async execute(command: DeleteMemberBoardCommand): Promise<boolean> {
-    return await this.dataSource.transaction(async (db) => {
-      const roleDelete = await db.delete(BoardUserRole, {
-        userId: command.userId,
-        boardId: command.id,
-      });
-
-      if (roleDelete.affected == 0) return false;
-
-      const board = await db.findOne(Board, {
-        where: { id: command.id },
-        relations: ['members'],
-      });
-
-      if (!board) return false;
-
-      board?.members.filter((member) => member.id !== command.userId);
-
-      await db.save(board);
-
-      return true;
+    const roleDelete = await this.dataSource.manager.delete(BoardUserRole, {
+      userId: command.userId,
+      boardId: command.id,
     });
+
+    if (roleDelete.affected == 0) return false;
+
+    const board = await this.dataSource.manager.findOne(Board, {
+      where: { id: command.id },
+      relations: ['members'],
+    });
+
+    if (!board) return false;
+
+    board?.members.filter((member) => member.id !== command.userId);
+
+    await this.dataSource.manager.save(Board, board);
+
+    return true;
   }
 }
