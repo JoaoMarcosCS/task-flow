@@ -1,17 +1,17 @@
 version: '3.7'
 
 services:
-  postgres:
+  database:
     image: postgres:13
-    container_name: postgres-container
+    container_name: database-postgres
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: task-flow
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
     ports:
       - "5432:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/data
 
 volumes:
-  postgres-data:
+  database:
