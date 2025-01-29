@@ -25,6 +25,7 @@ export class GetTasksByUserIdHandler
         },
         board: {
           title: true,
+          id: true,
         },
         priority: {
           description: true,
