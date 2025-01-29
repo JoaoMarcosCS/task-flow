@@ -13,12 +13,15 @@ import { DeleteBoardCommand } from './commands/delete-board/delete-board.command
 import { AddMemberBoardCommand } from './commands/add-member-board/add-member-board.command';
 import { DeleteMemberBoardCommand } from './commands/delete-member-board/delete-member.command';
 import { UpdateMemberRoleBoardCommand } from './commands/update-member-role-board/update-member-role-board.command';
+import { Role } from './entities/role.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class BoardService {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(data: CreateBoardDto) {
@@ -38,7 +41,7 @@ export class BoardService {
 
     return await this.queryBus.execute<
       GetBoardsByUserIdQuery,
-      GetBoardsByUserIdDto
+      GetBoardsByUserIdDto[]
     >(query);
   }
 
@@ -121,5 +124,14 @@ export class BoardService {
     if (!result) throw new BadRequestException('Erro ao atualizar membro');
 
     return { ok: result };
+  }
+
+  async getRoles() {
+    return await this.dataSource.manager.find(Role, {
+      select: {
+        description: true,
+        id: true,
+      },
+    });
   }
 }
