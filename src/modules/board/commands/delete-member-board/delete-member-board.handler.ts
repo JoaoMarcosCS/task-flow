@@ -25,7 +25,11 @@ export class DeleteMemberBoardHandler
 
     if (!board) return false;
 
-    board?.members.filter((member) => member.id !== command.userId);
+    if (board && board.members) {
+      board.members = board.members.filter(
+        (member) => member.id !== command.userId,
+      );
+    }
 
     await this.dataSource.manager.save(Board, board);
 
