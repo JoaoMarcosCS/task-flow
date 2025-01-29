@@ -58,12 +58,14 @@ export class GetBoardByUserIdHandler
         update_at: true,
         tasks: {
           assignees: {
+            id: true,
             name: true,
             email: true,
           },
           created_at: true,
           update_at: true,
           title: true,
+          id: true,
           description: true,
           priority: {
             description: true,
@@ -78,9 +80,12 @@ export class GetBoardByUserIdHandler
           email: true,
         },
       },
+      order: {
+        tasks: {
+          update_at: 'DESC',
+        },
+      },
     });
-
-    console.log(JSON.stringify(board[0]?.tasks));
 
     return {
       board: board[0],
