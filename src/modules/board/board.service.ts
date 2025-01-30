@@ -37,7 +37,7 @@ export class BoardService {
   }
 
   async getBoardsByUserId(data: number) {
-    const query = plainToClass(GetBoardsByUserIdQuery, data);
+    const query = plainToClass(GetBoardsByUserIdQuery, { userId: data });
 
     return await this.queryBus.execute<
       GetBoardsByUserIdQuery,
