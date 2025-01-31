@@ -247,7 +247,7 @@ export const seed = async (datasource: DataSource) => {
   );
 
   const statusDefault = statuses.find(
-    (status) => status.description === 'Não iniciado',
+    (status) => status.description === 'Em andamento',
   );
 
   const createTasksForBoard = async (tasks: any[], board: Board) => {
