@@ -18,7 +18,7 @@ export class UserService {
   ) {}
 
   async getUserById(data: number) {
-    const query = plainToClass(GetUserByIdQuery, data);
+    const query = plainToClass(GetUserByIdQuery, { id: data });
 
     const result = await this.queryBus.execute<
       GetUserByIdQuery,
