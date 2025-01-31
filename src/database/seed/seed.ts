@@ -258,6 +258,7 @@ export const seed = async (datasource: DataSource) => {
       task.board = board;
       task.priority = priorityDefault!;
       task.status = statusDefault!;
+      task.assignees = [allUsers[0]];
       await taskRepository.save(task);
     }
   };
