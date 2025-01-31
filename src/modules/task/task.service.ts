@@ -36,7 +36,7 @@ export class TaskService {
   }
 
   async getTasksByUserId(userId: number) {
-    const query = plainToClass(GetTasksByUserIdQuery, userId);
+    const query = plainToClass(GetTasksByUserIdQuery, { userId });
 
     return this.queryBus.execute<GetTasksByUserIdQuery, GetTasksByUserIdDto>(
       query,
