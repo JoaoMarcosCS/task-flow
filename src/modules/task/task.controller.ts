@@ -79,7 +79,7 @@ export class TaskController {
     return await this.taskService.assignResponsible(body);
   }
 
-  @Delete('delete-responsible')
+  @Post('delete-responsible')
   @ApiOperation({ summary: 'Remove um responsável de uma tarefa' })
   @ApiBody({ type: DeleteResponsibleCommand })
   @ApiResponse({
