@@ -65,6 +65,7 @@ export class TaskService {
   }
 
   async deleteResponsible(data: DeleteResponsibleCommand) {
+    console.log(JSON.stringify(data));
     const command = plainToClass(DeleteResponsibleCommand, data);
 
     const result = await this.commandBus.execute<
