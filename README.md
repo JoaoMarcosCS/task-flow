@@ -2,7 +2,10 @@
 
 # Backend com NestJS e Docker
 
-Este repositório contém um backend desenvolvido com NestJS e configurado para ser executado em um ambiente Docker.
+
+## Modelagem do Banco
+![Modelagem do Banco](public/modelagem_do_banco.png)
+
 
 ## Requisitos
 
