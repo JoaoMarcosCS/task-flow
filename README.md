@@ -17,7 +17,6 @@ Antes de iniciar, certifique-se de ter instalado em sua máquina:
 1. Clone este repositório:
    ```sh
    git clone https://github.com/JoaoMarcosCS/task-flow-back.git
-   cd seu-repositorio
    ```
 
 2. Crie um arquivo `.env` na raiz do projeto com as configurações necessárias. Exemplo:
